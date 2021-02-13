@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Tutorial: https://www.youtube.com/watch?v=6oFvqLfRnsU&ab_channel=DesignCourse -->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,34 @@
 <body>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/102/three.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.5/dat/gui/min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.2/TweenMax.min.js"></script>
+
+    <script>
+        // 3 primary components: scene, camera and renderer
+        const scene = new THREE.Scene();
+
+        // Camera takes 4 params: FOV (degrees), Aspect Ratio (Width / Height), Near Clipping Plane, Far Clipping Plane
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        
+        const renderer = new THREE.WebGLRenderer({antialias: true});
+        
+        // Renderer settings:
+        renderer.setClearColor("#E5E5E5");
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        
+        // Add renderer to HTML as a canvas element
+        document.body.appendChild(renderer.domElement);
+
+        // Make canvas responsive
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight); // Update size
+            camera.aspect = window.innerWidth / window.innerHeight; // Update aspect ratio
+            camera.updateProjectMatrix();
+        })
+
+        // Render scene and camera
+        renderer.render(scene, camera);
+
+    </script>
 </body>
 </html>
