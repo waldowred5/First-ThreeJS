@@ -38,20 +38,61 @@
             camera.updateProjectionMatrix();
         })
 
-        // Create sphere: Available params at https://threejs.org/docs/#api/en/geometries/SphereGeometry
-        const sphereGeometry = new THREE.SphereGeometry(1, 10, 10); // Define geometry
-        const sphereMaterial = new THREE.MeshLambertMaterial({color: 0x293BE0}) // Define material
-        const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial); // Build sphere
-        scene.add(sphereMesh); // Add sphere to canvas
+        // Determine which object is being clicked
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        // // Create sphere: Available params at https://threejs.org/docs/#api/en/geometries/SphereGeometry
+        // const sphereGeometry = new THREE.SphereGeometry(1, 32, 32); // Define geometry
+        // const sphereMaterial = new THREE.MeshLambertMaterial({color: 0x293BE0}) // Define material
+        // const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial); // Build sphere
+        // scene.add(sphereMesh); // Add sphere to canvas
+
+        // Create box: Available params at https://threejs.org/docs/#api/en/geometries/SphereGeometry
+        const boxGeometry = new THREE.BoxGeometry(1, 1, 1); // Define geometry
+        const boxMaterial = new THREE.MeshLambertMaterial({color: 0x293BE0}) // Define material
+        const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial); // Build box
+        scene.add(boxMesh); // Add box to canvas
+
+        // Set box orientation
+        // boxMesh.rotation.set(45, 35, 15) 
 
         // Add light to scene
         const light = new THREE.PointLight(0XFFFFFF, 1, 500);
         light.position.set(10, 0, 25); // Set light position
         scene.add(light); // Add light to canvas
  
-        // Render scene and camera
-        renderer.render(scene, camera);
+        // Ensure model aspect ratio is readjusted when screen size and screen aspect ratio change
+        const render = function() {
+            requestAnimationFrame(render); // Rerender every time the page refreshes (pause when on another tab)
 
-    </script>
+            // Rotate box
+            // boxMesh.rotation.x += 0.02;
+
+            renderer.render(scene, camera);
+        }
+
+        function onMouseMove(event) {
+            event.preventDefault();
+            // determine x,y of mouse position
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(scene.children, true);
+            for (let i = 0; i < intersects.length; i++) {
+                // TweenMax Animation Library
+                this.tl = new TimelineMax();
+                this.tl.to(intersects[i].object.scale, 1, {x: 2, ease: Expo.easeOut});
+                this.tl.to(intersects[i].object.scale, 0.5, {x: 0.5, ease: Expo.easeOut});
+                this.tl.to(intersects[i].object.position, 3, {x: 2, ease: Expo.easeOut});
+                this.tl.to(intersects[i].object.rotation, 0.5, {y: Math.PI*0.5, ease: Expo.easeOut}, "=-2.8");
+            }
+        }
+        
+        render();
+        
+        window.addEventListener('mousemove', onMouseMove)
+
+    </script> 
 </body>
 </html>
